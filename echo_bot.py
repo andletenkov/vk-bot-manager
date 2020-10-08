@@ -11,7 +11,8 @@ echo_bot = AsyncLongpollBot(__name__, ECHO_ID, ECHO_TOKEN)
 
 
 @echo_bot.callback(VkEventType.MESSAGE_NEW)
-def reply(vk, event):
+def echo(vk, event):
     reply_to = event['object']['from_id']
-    vk.messages.send(user_id=reply_to, message='Hello, stranger!',
+    text = event['object']['text']
+    vk.messages.send(user_id=reply_to, message=text,
                      random_id=random.randint(1, 10000))

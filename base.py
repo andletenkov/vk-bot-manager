@@ -1,33 +1,24 @@
-import functools
+from typing import Callable
+
 from loguru import logger
+
+from enums import VkEventType
 from vk_api import VK
 
 
 class Bot(object):
 
-    def __init__(self, name, token):
+    def __init__(self, name: str, token: str):
         self.vk = VK(token)
         self.name = name
-        self._callbacks = {}
+        self._handlers = {}
 
-    def callback(self, event_type):
-        def wrapper(f):
-            self._add_callback(event_type, f)
+    def add_handler(self, event_type: VkEventType, func: Callable):
+        self._handlers[event_type.value] = func
 
-            @functools.wraps
-            def inner(*args, **kwargs):
-                return f(*args, **kwargs)
-
-            return inner
-
-        return wrapper
-
-    def _add_callback(self, event_type, func):
-        self._callbacks[event_type.value] = func
-
-    def get_callback(self, event_type):
+    def get_handler(self, event_type: str):
         try:
-            return self._callbacks[event_type]
+            return self._handlers[event_type]
         except KeyError:
             logger.error(f'No handler for "{event_type}" event')
 
@@ -38,12 +29,12 @@ class Bot(object):
 class Runner(object):
     _bots = None
 
-    def __init__(self, *bots):
+    def __init__(self, *bots: Bot):
         self._bots = list(bots) if bots else []
         for bot in bots:
             self.register_bot(bot)
 
-    def register_bot(self, bot):
+    def register_bot(self, bot: Bot):
         self._bots.append(bot)
 
     def run(self):

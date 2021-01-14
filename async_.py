@@ -1,12 +1,12 @@
 import asyncio
-
+import aiohttp
 from base import Bot, Runner
 from loguru import logger
 
 
-class AsyncLongpollBot(Bot):
+class AsyncLongPollBot(Bot):
 
-    def __init__(self, name, group_id, token, wait=25):
+    def __init__(self, name: str, group_id: int, token: str, wait=25):
         super().__init__(name, token)
         self.group_id = group_id
         self.wait = wait
@@ -17,7 +17,7 @@ class AsyncLongpollBot(Bot):
 
         self.get_server()
 
-    def get_server(self, update_ts=True):
+    def get_server(self, update_ts: bool = True):
         response_obj = self.vk.groups.getLongPollServer(group_id=self.group_id)
         try:
             response = response_obj['response']
@@ -70,8 +70,8 @@ class AsyncLongpollBot(Bot):
             for event in events:
                 logger.info(f'[{self.name}] New event: {event}')
 
-                callback = self.get_callback(event['type'])
-                callback(self.vk, event)
+                handler = self.get_handler(event['type'])
+                handler(self.vk, event)
 
 
 class AsyncRunner(Runner):

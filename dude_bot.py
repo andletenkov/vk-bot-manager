@@ -10,7 +10,10 @@ from config import DUDE_ID, DUDE_TOKEN
 dude_bot = AsyncLongPollBot(__name__, DUDE_ID, DUDE_TOKEN)
 
 
-@on_message_new(dude_bot, ['/hello', 'hi'])
+@on_message_new(dude_bot, [
+    'hello',
+    'hi'
+])
 def reply(vk, event):
     reply_to = event['object']['from_id']
     vk.messages.send(user_id=reply_to, message="It's Wednesday, my dudes.",

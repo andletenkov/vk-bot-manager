@@ -10,7 +10,10 @@ from config import ECHO_ID, ECHO_TOKEN
 echo_bot = AsyncLongPollBot(__name__, ECHO_ID, ECHO_TOKEN)
 
 
-@on_message_new(echo_bot, ['/hello', '/hi'])
+@on_message_new(echo_bot, [
+    'hello',
+    'hi'
+])
 def echo(vk, event):
     reply_to = event['object']['from_id']
     text = event['object']['text']

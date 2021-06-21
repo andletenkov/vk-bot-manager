@@ -14,13 +14,17 @@ class Bot(object):
         self._handlers = {}
 
     def add_handler(self, event_type: VkEventType, func: Callable):
-        self._handlers[event_type.value] = func
+        handlers = self._handlers.get(event_type.value)
+        if handlers:
+            handlers.append(func)
+        else:
+            self._handlers[event_type.value] = [func]
 
-    def get_handler(self, event_type: str):
+    def get_handlers(self, event_type: str):
         try:
             return self._handlers[event_type]
         except KeyError:
-            logger.error(f'No handler for "{event_type}" event')
+            logger.warning(f'No handler for "{event_type}" event')
 
     def listen(self):
         raise NotImplementedError
